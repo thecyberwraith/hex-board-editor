@@ -1,0 +1,4 @@
+#main-content > div canvas {
+    width: 100%;
+    aspect-ratio: 3/2;
+}
