@@ -55,6 +55,15 @@ export class GameBoard {
         return Array.from(this.types.values())
     }
 
+    getTypeById(id) {
+        let type = this.types.get(id)
+        if (type == undefined) {
+            throw new Error(`Tried to get type id ${id}, but does not exist: `, this.types)
+        }
+
+        return type
+    }
+
     loadFrom(storedObj) {
         this.types = storedObj.types
         this.hexes = storedObj.hexes
@@ -64,16 +73,23 @@ export class GameBoard {
     }
 
     details(hex) {
-        // Return the details (actual HexType and Label properies)
+        // Return the details (actual HexType and Label properies) or null if the
+        // hex does not exist in the board.
         return {
-            type: this.types.get(hex.typeID),
+            type: this.getTypeById(hex.typeID),
             label: this.labels.get(hex.labelID)
         }
     }
 
     detailsAt(location) {
-        // Return the details (actual HexType and Label properties at location)
-        return this.details(this.hexes.get(HexSpace.keyFromLocation(location)))
+        // Return the details (actual HexType and Label properties at location) given
+        // the coordinates of the hex.
+        const key = HexSpace.keyFromLocation(location)
+        if (this.hexes.has(key)) {
+            const hex = this.hexes.get(key)
+            return this.details(hex)
+        }
+        return null
     }
 
     addType(name, color) {
@@ -85,6 +101,7 @@ export class GameBoard {
         }
 
         this.types.set(newId, new HexType(newId, name, color))
+        console.debug(`Added type ${name} with id ${newId}`)
     }
 
     removeType(id) {
@@ -101,9 +118,12 @@ export class GameBoard {
         this.types.delete(id)
     }
 
-    setHexType(location, newHexType) {
-        if (newHexType === undefined || newHexType === null) {
+    setHexType(location, newHexTypeID) {
+        if (newHexTypeID === undefined || newHexTypeID === null) {
             throw new Error('Cannot set a hex type to undefined or null');
+        }
+        else if (!this.types.has(newHexTypeID)) {
+            throw new Error(`Unknown hex type id ${newHexTypeID}. Known: `, this.types)
         }
 
         let oldHex = this.hexes.get(HexSpace.keyFromLocation(location));
@@ -113,8 +133,16 @@ export class GameBoard {
             label = oldHex.labelID
         }
 
-        let newHex = new HexSpace(location, label, newHexType);
+        let newHex = new HexSpace(location, label, newHexTypeID);
         this.hexes.set(newHex.key, newHex);
+    }
+
+    clearHex(location) {
+        const key = HexSpace.keyFromLocation(location)
+        if (this.hexes.has(key)) {
+            console.debug(`Removing hex ${location} from the game.`)
+        }
+        this.hexes.delete(HexSpace.keyFromLocation(location))
     }
 }
 
@@ -155,7 +183,7 @@ function setupVersion1(db) {
 
         let game = new GameBoard('Default');
 
-        game.types.set(0, new HexType(1, 'Type 1', '#FFFFFF'));
+        game.addType('Default', '#FFFFFF')
 
         gameStore.add(game);
     }

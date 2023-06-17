@@ -55,6 +55,9 @@ export class HexCanvas {
         
         for (const hex of game.hexes.values()) {
             const details = game.details(hex)
+            if (details == undefined) {
+                console.error('Tried to draw undefined details:', hex, game.hexes, game.types)
+            }
             this.fill_hex(ctx, hex.location, details.type.color)
             if (hex.label) {
                 this.draw_hex_text(ctx, hex.x, hex.y, details.label.abbreviation, invertColor(details.type.color));

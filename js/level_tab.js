@@ -124,7 +124,10 @@ export class LevelTab extends GenericTab {
         let types = game.typesList
 
         for(let i in types) {
-            $select.append($(`<option value="${i}">${types[i].name}</option>`))
+            const typeID = types[i].id
+            const typeName = types[i].name
+
+            $select.append($(`<option value="${typeID}">${typeName}</option>`))
         }
 
         $select.append($('<option value="-1">Clear</option>'))
@@ -132,17 +135,20 @@ export class LevelTab extends GenericTab {
 
     async setHexType(location) {
         const game = await getCurrentGame();
-    
-        let value = parseInt(document.getElementById(this.#applicatorInput).value);
-        let key = HexSpace.keyFromLocation(location);
-    
-        if (value === "-1") {
-            game.hexes.delete(key);
+
+        let newTypeId = parseInt(document.getElementById(this.#applicatorInput).value)
+        if (newTypeId === -1) {
+            game.clearHex(location)
             this.refresh(true)
             modificationNotification()
+            return
         }
-        else if (!game.hexes.has(key) || game.hexes.get(key).phase !== value) {
-            game.setHexType(location, value)
+
+        const details = game.detailsAt(location)
+        const newType = game.getTypeById(newTypeId)
+
+        if (details == null || details.type !== newType) {
+            game.setHexType(location, newType.id)
             this.refresh(true)
             modificationNotification()
         }
