@@ -97,7 +97,8 @@ export class GameDataTab extends GenericTab {
     }
 
     async refreshCurrentGame() {
-        $(`#${this.#currentGameNameSpan}`).text(`Currently editing game "${(await getCurrentGame()).name}"`)
+        const game = await getCurrentGame()
+        $(`#${this.#currentGameNameSpan}`).text(`Currently editing game "${game.name}"`)
     }
 
     async editGameByName(name) {
@@ -152,7 +153,6 @@ export class GameDataTab extends GenericTab {
         let originalGame = await getGameByName(original)
         originalGame.name = newName
         await storeGame(originalGame)
-        console.debug(this)
         await this.refreshGameList()
     }
 }

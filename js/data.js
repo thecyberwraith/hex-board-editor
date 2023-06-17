@@ -60,6 +60,7 @@ export class GameBoard {
         this.hexes = storedObj.hexes
         this.labels = storedObj.labels
         this.radius = storedObj.radius
+        this.name = storedObj.name
     }
 
     details(hex) {
