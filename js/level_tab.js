@@ -1,5 +1,5 @@
 import { phaseColors, HexCanvas } from "./canvas.js";
-import { BoardHex, HexType, StoredHexGame } from "./data.js";
+import { HexSpace, HexType, GameBoard } from "./data.js";
 import { getCurrentGame, modificationNotification } from "./game_data_tab.js";
 import { GenericTab } from "./tab.js";
 
@@ -53,13 +53,21 @@ export class LevelTab extends GenericTab {
         </div>`))[0];        
     }
 
-    async refresh() {
-        return Promise.all([
-            this.populateHexTypes(),
-            this.populateApplicator(),
-            (async () => {$(`#${this.#hexSizeInput}`).value = (await getCurrentGame()).radius})(),
-            this.#canvas.render()
-        ])
+    async refresh(only_canvas=false) {
+        let updates = null
+
+        if (only_canvas) {
+            updates = [this.#canvas.render()]
+        }
+        else {
+            updates = [
+                this.populateHexTypes(),
+                this.populateApplicator(),
+                (async () => {$(`#${this.#hexSizeInput}`).value = (await getCurrentGame()).radius})(),
+                this.#canvas.render()
+            ]
+        }
+        return Promise.all(updates)
     }
 
     async populateHexTypes() {
@@ -101,9 +109,8 @@ export class LevelTab extends GenericTab {
                     return
                 }
                 
-                let test = new StoredHexGame()
-                test.addType("Potato", "#FFFFFF")
                 game.addType(name, '#FFFFFF')
+                modificationNotification()
                 this.refresh()
             }))
     }
@@ -114,10 +121,10 @@ export class LevelTab extends GenericTab {
         $select.empty()
 
         const game = await getCurrentGame()
+        let types = game.typesList
 
-        for(let type in game.types) {
-            const hexType = game.types[i]
-            $select.append($(`<option value="{i}">${hexType.name}</option>`))
+        for(let i in types) {
+            $select.append($(`<option value="${i}">${types[i].name}</option>`))
         }
 
         $select.append($('<option value="-1">Clear</option>'))
@@ -126,17 +133,17 @@ export class LevelTab extends GenericTab {
     async setHexType(location) {
         const game = await getCurrentGame();
     
-        let value = $(`#${this.#applicatorInput}`).value;
-        let key = BoardHex.keyFromLocation(location);
+        let value = parseInt(document.getElementById(this.#applicatorInput).value);
+        let key = HexSpace.keyFromLocation(location);
     
         if (value === "-1") {
             game.hexes.delete(key);
-            this.refresh()
+            this.refresh(true)
             modificationNotification()
         }
         else if (!game.hexes.has(key) || game.hexes.get(key).phase !== value) {
-            game.hexes.set(key, new BoardHex(location, game.phases[parseInt(value)], null))
-            this.refresh()
+            game.setHexType(location, value)
+            this.refresh(true)
             modificationNotification()
         }
     }

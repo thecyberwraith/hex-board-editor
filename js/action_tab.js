@@ -1,4 +1,4 @@
-import { BoardHex, HexLabel } from './data.js';
+import { HexSpace, HexLabel } from './data.js';
 import { getCurrentGame } from './game_data_tab.js';
 import { HexCanvas } from './canvas.js';
 import { GenericTab } from './tab.js';

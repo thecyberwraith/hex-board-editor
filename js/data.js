@@ -24,7 +24,7 @@ export class HexLabel {
     }
 }
 
-export class BoardHex {
+export class HexSpace {
     constructor(location, labelID, typeID) {
         this.location = location
         this.labelID = labelID
@@ -32,7 +32,7 @@ export class BoardHex {
     }
 
     get key() {
-        return BoardHex.keyFromLocation(this.location)
+        return HexSpace.keyFromLocation(this.location)
     }
 
     static keyFromLocation(location) {
@@ -41,13 +41,18 @@ export class BoardHex {
 
 }
 
-export class StoredHexGame {
+export class GameBoard {
     constructor(name) {
         this.name = name
         this.types = new Map();
         this.hexes = new Map();
         this.labels = new Map();
         this.radius = 30;
+    }
+
+    get typesList() {
+        // Return an array of the types existing
+        return Array.from(this.types.values())
     }
 
     loadFrom(storedObj) {
@@ -63,6 +68,11 @@ export class StoredHexGame {
             type: this.types.get(hex.typeID),
             label: this.labels.get(hex.labelID)
         }
+    }
+
+    detailsAt(location) {
+        // Return the details (actual HexType and Label properties at location)
+        return this.details(this.hexes.get(HexSpace.keyFromLocation(location)))
     }
 
     addType(name, color) {
@@ -88,6 +98,22 @@ export class StoredHexGame {
             this.hexes.delete(hex.key);
         }
         this.types.delete(id)
+    }
+
+    setHexType(location, newHexType) {
+        if (newHexType === undefined || newHexType === null) {
+            throw new Error('Cannot set a hex type to undefined or null');
+        }
+
+        let oldHex = this.hexes.get(HexSpace.keyFromLocation(location));
+        let label = null
+
+        if (oldHex !== undefined) {
+            label = oldHex.labelID
+        }
+
+        let newHex = new HexSpace(location, label, newHexType);
+        this.hexes.set(newHex.key, newHex);
     }
 }
 
@@ -126,7 +152,7 @@ function setupVersion1(db) {
         console.debug('Adding default game board');
         const gameStore = db.transaction([GAMESTORE], "readwrite").objectStore(GAMESTORE);
 
-        let game = new StoredHexGame('Default');
+        let game = new GameBoard('Default');
 
         game.types.set(0, new HexType(1, 'Type 1', '#FFFFFF'));
 
@@ -150,7 +176,7 @@ export async function getGameByName(name) {
             .objectStore(GAMESTORE)
             .get(name);
         result.onsuccess = (event) => { 
-            let loadedGame = new StoredHexGame(event.target.result)
+            let loadedGame = new GameBoard(event.target.result)
             loadedGame.loadFrom(event.target.result)
             resolve(loadedGame) }
         result.onerror = (event) => { reject(event) }

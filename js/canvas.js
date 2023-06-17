@@ -55,8 +55,7 @@ export class HexCanvas {
         
         for (const hex of game.hexes.values()) {
             const details = game.details(hex)
-
-            this.fill_hex(ctx, hex.location, details.type.color);
+            this.fill_hex(ctx, hex.location, details.type.color)
             if (hex.label) {
                 this.draw_hex_text(ctx, hex.x, hex.y, details.label.abbreviation, invertColor(details.type.color));
             }
@@ -115,7 +114,10 @@ export class HexCanvas {
         return 2 * this.radius * Math.cos(Math.PI/6);
     }
 
-    get_hex_center(x, y) {
+    get_hex_center(location) {
+        const x = location[0]
+        let y = location[1]
+
         if (x % 2 == 1) {
             y += 0.5;
         }
@@ -132,24 +134,25 @@ export class HexCanvas {
         this.stroke_hex(ctx, highlight[0], highlight[1], '#FFFF00');
     }
     
-    stroke_hex(ctx, x, y, color, lineWidth=2) {
+    stroke_hex(ctx, location, color, lineWidth=2) {
         let old = ctx.lineWidth;
         ctx.lineWidth = lineWidth;
         ctx.strokeStyle = color;
-        this.trace_hex(ctx, x, y);
+        this.trace_hex(ctx, location);
         ctx.stroke()
         ctx.lineWidth = old;
     }
     
-    fill_hex(ctx, x, y, color) {
-        this.stroke_hex(ctx, x, y, invertColor(color));
+    fill_hex(ctx, location, color) {
+        const invColor = invertColor(color)
+        this.stroke_hex(ctx, location, invColor);
         ctx.fillStyle = color;
-        this.trace_hex(ctx, x, y);
+        this.trace_hex(ctx, location);
         ctx.fill();
     }
     
-    trace_hex(ctx, x, y) {
-        let center =this.get_hex_center(x,y);
+    trace_hex(ctx, location) {
+        let center =this.get_hex_center(location);
         let center_x = center[0];
         let center_y = center[1];
         
@@ -166,8 +169,8 @@ export class HexCanvas {
         ctx.closePath();
     }
     
-    draw_hex_text(ctx, x, y, text, color='#000000') {
-        let center = this.get_hex_center(x, y);
+    draw_hex_text(ctx, location, text, color='#000000') {
+        let center = this.get_hex_center(location);
         let metrics = ctx.measureText(text);
         let width = Math.abs(metrics.actualBoundingBoxLeft) + Math.abs(metrics.actualBoundingBoxRight);
         ctx.fillStyle = color;
