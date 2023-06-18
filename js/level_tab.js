@@ -87,10 +87,7 @@ export class LevelTab extends GenericTab {
             if (game.types.size > 1) {
                 $subdiv.append($(`<button class="button alert">Delete</button>`)
                     .on("click", async (e) => {
-                        const game = (await getCurrentGame())
-                        game.removePhase()
-                        modificationNotification()
-                        this.refresh()
+                        await this.deleteHexType(hexType.id)
                     })
                 )
             }
@@ -133,12 +130,28 @@ export class LevelTab extends GenericTab {
         $select.append($('<option value="-1">Clear</option>'))
     }
 
+    async deleteHexType(typeId) {
+        let game = await getCurrentGame()
+        const hexes = game.queryHexesByTypeId(typeId)
+
+        if (hexes.length > 0) {
+            const typeName = game.getTypeById(typeId).name
+            if (!confirm(`Type ${typeName} has hexes on the board. Delete them all with the type?`)) {
+                return
+            }
+        }
+
+        game.removeType(typeId)
+        modificationNotification()
+        this.refresh()
+    }
+
     async setHexType(location) {
         const game = await getCurrentGame();
 
         let newTypeId = parseInt(document.getElementById(this.#applicatorInput).value)
         if (newTypeId === -1) {
-            game.clearHex(location)
+            game.clearHexAtLocation(location)
             this.refresh(true)
             modificationNotification()
             return

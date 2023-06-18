@@ -105,16 +105,17 @@ export class GameBoard {
     }
 
     removeType(id) {
-        let activeHexes = []
-        for (let hex in this.hexes.values()) {
-            if (hex.typeID == id) {
-                activeHexes.push(hex);
-            }
+        const hexesOfType = this.queryHexesByTypeId(id)
+
+        if (hexesOfType.length > 0) {
+            console.debug(`Preparing to remove ${hexesOfType.length} hexes with id ${id}`)
         }
 
-        for (let hex in activeHexes) {
-            this.hexes.delete(hex.key);
-        }
+        hexesOfType.forEach( hexId => {
+            this.clearHexById(hexId)
+        })
+
+        console.debug(`Deleting type with id ${id}.`)
         this.types.delete(id)
     }
 
@@ -137,12 +138,22 @@ export class GameBoard {
         this.hexes.set(newHex.key, newHex);
     }
 
-    clearHex(location) {
+    clearHexByLocation(location) {
         const key = HexSpace.keyFromLocation(location)
-        if (this.hexes.has(key)) {
-            console.debug(`Removing hex ${location} from the game.`)
+        this.clearHexById(key)
+    }
+
+    clearHexById(hexId) {
+        if (this.hexes.has(hexId)) {
+            console.debug(`Removing hex from the game.`, this.hexes.get(hexId))
+            this.hexes.delete(hexId)
         }
-        this.hexes.delete(HexSpace.keyFromLocation(location))
+    }
+
+    queryHexesByTypeId(typeId) {
+        // Returns the keys for all hexes that match the given type.
+        const allHexes = Array.from(this.hexes.keys())
+        return allHexes.filter( hexKey => this.hexes.get(hexKey).typeID == typeId )
     }
 }
 
