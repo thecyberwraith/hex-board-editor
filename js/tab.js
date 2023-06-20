@@ -18,7 +18,7 @@ export class GenericTab {
         return p
     }
 
-    activate() {console.log('Not this one!')}
+    activate() {console.warn('Activate method of Tab was not overridden.')}
     deactivate() {}
 
     updateVisibility(visibility) {
@@ -33,5 +33,9 @@ export class GenericTab {
                 this.deactivate();
             }
         }
+    }
+
+    my(tag) {
+        return $(`#${tag}`)
     }
 }

@@ -92,13 +92,16 @@ export class GameBoard {
         return null
     }
 
-    addType(name, color) {
-        let ids = new Set(this.types.keys())
-
+    getNewId(map) {
         let newId = 0
-        while (ids.has(newId)) {
+        while (map.has(newId)) {
             newId += 1
         }
+
+        return newId
+    }
+    addType(name, color) {
+        const newId = this.getNewId(this.types)
 
         this.types.set(newId, new HexType(newId, name, color))
         console.debug(`Added type ${name} with id ${newId}`)
@@ -154,6 +157,48 @@ export class GameBoard {
         // Returns the keys for all hexes that match the given type.
         const allHexes = Array.from(this.hexes.keys())
         return allHexes.filter( hexKey => this.hexes.get(hexKey).typeID == typeId )
+    }
+
+    get categoryLabelMap() {
+        // Returns a map that maps strings (Category Names) to an array
+        // containing such labels.
+        let map = new Map()
+        for(let label of this.labels.values()) {
+            if (!map.has(label.category)) {
+                map.set(label.category, new Array())
+            }
+
+            map.get(label.category).push(label)
+        }
+
+        return map
+    }
+
+    createLabel(category, short, long) {
+        const newId = this.getNewId(this.labels)
+        this.updateLabel(newId, category, short, long)
+    }
+
+    updateLabel(id, category, short, long) {
+        this.labels.set(id, new HexLabel(id, category, short, long))
+    }
+
+    getLabelById(labelId) {
+        return this.labels.get(labelId)
+    }
+
+    deleteLabelById(labelId) {
+        if (!this.labels.get(labelId)) {
+            throw Error(`Label id ${labelId} cannot be deleted. It does not exist.`)
+        }
+
+        for(let hex of this.hexes.values()) {
+            if (hex.labelID==labelId) {
+                hex.labelID = null
+            }
+        }
+
+        this.labels.delete(labelId)
     }
 }
 
