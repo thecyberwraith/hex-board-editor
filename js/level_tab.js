@@ -76,7 +76,7 @@ export class LevelTab extends GenericTab {
         $div.empty()
         game.types.forEach( hexType => {
             let $subdiv = $('<div class="cell">')
-                .append($('<p>')).text(hexType.name)
+                .append($('<p>').text(hexType.name))
                 .append($(`<input type="color" value="${hexType.color}">`)
                     .on("change", async (e) => {
                         hexType.color = e.target.value
