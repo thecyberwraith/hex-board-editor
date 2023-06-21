@@ -41,6 +41,18 @@ export class HexSpace {
 
 }
 
+function castMapToType(map, type) {
+    let newMap = new Map()
+
+    map.forEach( (value, key) => {
+        let newObj = new type()
+        Object.assign(newObj, value)
+        newMap.set(key, newObj)
+    } )
+
+    return newMap
+}
+
 export class GameBoard {
     constructor(name) {
         this.name = name
@@ -65,9 +77,10 @@ export class GameBoard {
     }
 
     loadFrom(storedObj) {
-        this.types = storedObj.types
-        this.hexes = storedObj.hexes
-        this.labels = storedObj.labels
+        this.types = castMapToType(storedObj.types, HexType)
+        this.hexes = castMapToType(storedObj.hexes, HexSpace)
+        this.labels = castMapToType(storedObj.labels, HexLabel)
+
         this.radius = storedObj.radius
         this.name = storedObj.name
     }
@@ -100,6 +113,7 @@ export class GameBoard {
 
         return newId
     }
+    
     addType(name, color) {
         const newId = this.getNewId(this.types)
 
@@ -261,7 +275,7 @@ export async function getGameByName(name) {
             .objectStore(GAMESTORE)
             .get(name);
         result.onsuccess = (event) => { 
-            let loadedGame = new GameBoard(event.target.result)
+            let loadedGame = new GameBoard(event.target.result.name)
             loadedGame.loadFrom(event.target.result)
             resolve(loadedGame) }
         result.onerror = (event) => { reject(event) }
