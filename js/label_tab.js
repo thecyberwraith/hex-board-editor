@@ -42,10 +42,13 @@ export class LabelTab extends GenericTab {
         </div>`))[0]
     }
 
-    async activate() {
+    async setup() {
         this.prepareEditor()
-        await this.populateCategories()
         this.my(this.#newLabel).on("click", e => {this.openEditor()})
+    }
+
+    activate() {
+        this.populateCategories()
     }
 
     prepareEditor() {
