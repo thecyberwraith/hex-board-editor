@@ -7,36 +7,36 @@ export class PlayTab extends GenericTab {
     internalLabel = 'play';
 
     #canvas = null;
-    #labelHeading = null;
-    #actionParagraph = null;
+    #shortLabelId = 'play-short-desc';
+    #longLabelId = 'play-long-desc';
     
     get innerDiv() {
         return $.parseHTML($.trim(`
         <div>
             <canvas id="playcanvas"></canvas>
-            <h2 id="play-abbreviation"></h2>
-            <p id="play-description"></p>
+            <h2 id="${this.#shortLabelId}"></h2>
+            <p id="${this.#longLabelId}"></p>
         </div>`))[0]
     }
 
     setup() {
-        this.#labelHeading = document.getElementById('play-abbreviation');
-        this.#actionParagraph = document.getElementById('play-description');
         this.#canvas = new HexCanvas(document.getElementById('playcanvas'));
 
-        this.#canvas.onClick = () => {
-            this.#canvas.setFocusHexToCursor();
+        this.#canvas.onClick = async () => {
+            const details = (await getCurrentGame()).detailsAt(this.#canvas.cursor)
+            let $short = this.my(this.#shortLabelId)
+            let $long = this.my(this.#longLabelId)
 
-            if (get_map().has(Hex.key(this.#canvas.focus))) {
+            if (details) {
+                this.#canvas.setFocusHexToCursor();
 
-                let action = get_map().get(Hex.key(this.#canvas.focus)).action;
-                if (action !== null) {
-                    this.#labelHeading.innerHTML = action.abbreviation;
-                    this.#actionParagraph.innerHTML = action.description;
+                if (details.label) {
+                    $short.text(details.label.shortLabel)
+                    $long.text(details.label.longLabel)
                 }
                 else {
-                    this.#labelHeading.innerHTML = '';
-                    this.#actionParagraph.innerHTML = '';
+                    $short.text('')
+                    $long.text('')
                 }
             }
         }

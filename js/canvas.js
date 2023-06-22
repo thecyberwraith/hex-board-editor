@@ -65,9 +65,12 @@ export class HexCanvas {
             }
         }
     
-        if (this.renderCursor)
-            this.highlight_hex(ctx, this.cursor);
-        this.draw_focus_hex(ctx, this.focus);
+        if (this.renderCursor && this.cursor) {
+            this.stroke_hex(ctx, this.cursor, '#FFFF00')
+        }
+        if (this.focus) {
+            this.stroke_hex(ctx, this.focus, '#007C88', 7);
+        }
     }
 
     actionDown() {
@@ -131,13 +134,6 @@ export class HexCanvas {
         return [center_x, center_y]
     }  
 
-    highlight_hex(ctx, highlight) {
-        if (highlight === null || highlight === undefined)
-            return
-        
-        this.stroke_hex(ctx, highlight[0], highlight[1], '#FFFF00');
-    }
-    
     stroke_hex(ctx, location, color, lineWidth=2) {
         let old = ctx.lineWidth;
         ctx.lineWidth = lineWidth;
@@ -179,13 +175,6 @@ export class HexCanvas {
         let width = Math.abs(metrics.actualBoundingBoxLeft) + Math.abs(metrics.actualBoundingBoxRight);
         ctx.fillStyle = color;
         ctx.fillText(text, center[0] - (width/2), center[1] + (metrics.actualBoundingBoxAscent/2));
-    }
-    
-    draw_focus_hex(ctx, location) {
-        if (location === null)
-            return;
-            
-        this.stroke_hex(ctx, location[0], location[1], '#007C88', 7);
     }
 }
 
