@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>Hex Game Setup</title>
+        <link rel="stylesheet" type="text/css" href="./styles/main.css">
+        <link rel="stylesheet" type="text/css" href="./styles/foundation/foundation.min.css" />
+		<link rel="stylesheet" type="text/css" href="./styles/main.css" />
+		<script src="js/foundation/vendor/jquery.js"></script>
+		<script src="js/foundation/vendor/what-input.js"></script>
+		<script src="js/foundation/vendor/foundation.min.js"></script>
+    </head>
+    <body>
+        <ul class="tabs" id="tabs-container"></ul>
+        <div id="main-content" class="tabs-content" data-tabs-content="tabs-container">
+        </div>
+        </body>
+    
+    <script type="module">
+        import { setup } from './js/main.js';
+        //if (prompt("Where do you want to go?") != "funkytown") {
+        //    document.location = '/';
+        //}
+        setup();
+    </script>
+</html>
