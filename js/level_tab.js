@@ -1,5 +1,4 @@
-import { phaseColors, HexCanvas } from "./canvas.js";
-import { HexSpace, HexType, GameBoard } from "./data.js";
+import { HexCanvas } from "./canvas.js";
 import { getCurrentGame, modificationNotification } from "./game_data_tab.js";
 import { GenericTab } from "./tab.js";
 
@@ -151,7 +150,7 @@ export class LevelTab extends GenericTab {
 
         let newTypeId = parseInt(document.getElementById(this.#applicatorInput).value)
         if (newTypeId === -1) {
-            game.clearHexAtLocation(location)
+            game.clearHexByLocation(location)
             this.refresh(true)
             modificationNotification()
             return

@@ -59,8 +59,9 @@ export class HexCanvas {
                 console.error('Tried to draw undefined details:', hex, game.hexes, game.types)
             }
             this.fill_hex(ctx, hex.location, details.type.color)
-            if (hex.label) {
-                this.draw_hex_text(ctx, hex.x, hex.y, details.label.abbreviation, invertColor(details.type.color));
+
+            if (hex.labelID != null) {
+                this.draw_hex_text(ctx, hex.location, details.label.shortLabel, invertColor(details.type.color));
             }
         }
     
@@ -187,14 +188,6 @@ export class HexCanvas {
         this.stroke_hex(ctx, location[0], location[1], '#007C88', 7);
     }
 }
-
-export const phaseColors = [
-    '#00BE5F',
-    '#FFFF00',
-    '#FF0000',
-    '#000000',
-    '#FF00FF'
-]
 
 function invertColor(hex) {
     // https://stackoverflow.com/a/35970186
