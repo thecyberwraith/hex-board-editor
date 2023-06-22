@@ -10,6 +10,8 @@ export class HexCanvas {
 
     constructor(canvas) {
         this.#canvas = canvas;
+        canvas.style.cursor = "crosshair"
+
         canvas.addEventListener('mousedown', (e) => {this.actionDown(e)});
         canvas.addEventListener('mouseup', (e) => {this.actionUp(e);});
         canvas.addEventListener('mousemove', (e) => {this.actionMove(e);});
