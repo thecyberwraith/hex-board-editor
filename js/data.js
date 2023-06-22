@@ -94,6 +94,10 @@ export class GameBoard {
         }
     }
 
+    detailsById(hexId) {
+        return this.details(this.hexes.get(hexId))
+    }
+
     detailsAt(location) {
         // Return the details (actual HexType and Label properties at location) given
         // the coordinates of the hex.
@@ -155,15 +159,32 @@ export class GameBoard {
         this.hexes.set(newHex.key, newHex);
     }
 
+    setHexLabelByIds(hexId, newLabelId) {
+        let oldHex = this.hexes.get(hexId)
+
+        if (oldHex == undefined) {
+            return
+        }
+        
+        this.hexes.set(oldHex.key, new HexSpace(oldHex.location, newLabelId, oldHex.typeID))
+    }
+
+    setHexLabel(location, newLabelId) {
+        return this.setHexLabelByIds(HexSpace.keyFromLocation(location))
+    }
+
     clearHexByLocation(location) {
         const key = HexSpace.keyFromLocation(location)
         this.clearHexById(key)
     }
 
     clearHexById(hexId) {
+        console.log('Removing key', hexId)
         if (this.hexes.has(hexId)) {
             console.debug(`Removing hex from the game.`, this.hexes.get(hexId))
             this.hexes.delete(hexId)
+        } else {
+            console.log(this.hexes)
         }
     }
 

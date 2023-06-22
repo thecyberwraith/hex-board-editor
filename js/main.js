@@ -1,11 +1,17 @@
 import { LevelTab } from './level_tab.js'
-import { ActionsTab } from './action_tab.js';
 import { PlayTab } from './play_tab.js';
 import { LabelTab } from './label_tab.js';
+import { AssignLabelTab } from './assign_tab.js';
 import { GameDataTab } from './game_data_tab.js';
 import { initialize_db } from './data.js';
 
-const ALL_TABS = [new LevelTab(), new ActionsTab(), new PlayTab(), new GameDataTab()]
+const ALL_TABS = [
+    new LevelTab(),
+    new LabelTab(), 
+    new AssignLabelTab(), 
+    new PlayTab(), 
+    new GameDataTab()
+]
 
 var current_tab = null;
 var highlight = null;
