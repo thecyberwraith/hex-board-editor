@@ -144,10 +144,10 @@ export class LabelTab extends GenericTab {
                             })
                         )
                     )
+                    .on('dblclick', e => {
+                        this.openEditor(label.id)
+                    })
                 )
-                .on('dblclick', e => {
-                    this.openEditor(label.id)
-                })
             })
             $cats.append($catDiv)
         }
