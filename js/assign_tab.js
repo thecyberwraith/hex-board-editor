@@ -142,7 +142,7 @@ export class AssignLabelTab extends GenericTab {
         }
 
         for(let [category, labels] of game.categoryLabelMap) {
-            const catLabel = `assign-random-checkbox-${category}`
+            const catLabel = `assign-random-checkbox-${category.replace(' ','-')}`
             const allLabel = `${catLabel}-all`
             let $set = $(`<fieldset id="${catLabel}">`)
             $set.append($('<legend>').text(`Category ${category}`))
