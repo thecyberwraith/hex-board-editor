@@ -102,7 +102,8 @@ export class GameDataTab extends GenericTab {
     }
 
     async editGameByName(name) {
-        if (isDirty && !confirm(`The current game "${getCurrentGame().name}" isn't saved. Are you sure you want to lose the changes?`)) {
+        let oldName = (await getCurrentGame()).name
+        if (isDirty && !confirm(`The current game "${oldName}" isn't saved. Are you sure you want to lose the changes?`)) {
             return
         }
         console.log('Editing game', name)
@@ -138,6 +139,7 @@ export class GameDataTab extends GenericTab {
     
         if (!newName) {
             console.warn('Aborted saving new name: ', newName);
+            return
         }
     
         if (newName == original) {
