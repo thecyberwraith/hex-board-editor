@@ -170,7 +170,7 @@ export class GameBoard {
     }
 
     setHexLabel(location, newLabelId) {
-        return this.setHexLabelByIds(HexSpace.keyFromLocation(location))
+        return this.setHexLabelByIds(HexSpace.keyFromLocation(location), newLabelId)
     }
 
     clearHexByLocation(location) {
