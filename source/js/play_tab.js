@@ -13,6 +13,9 @@ export class PlayTab extends GenericTab {
     get innerDiv() {
         return $.parseHTML($.trim(`
         <div>
+            <div>
+                <button id="${this.#rollButton}">Roll</Button>
+            </div>
             <canvas id="playcanvas"></canvas>
             <h2 id="${this.#shortLabelId}"></h2>
             <p id="${this.#longLabelId}"></p>
