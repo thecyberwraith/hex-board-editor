@@ -9,12 +9,18 @@ export class PlayTab extends GenericTab {
     #canvas = null;
     #shortLabelId = 'play-short-desc';
     #longLabelId = 'play-long-desc';
-    
+
+    #rollButtonId = 'play-roll-button';
+    #rollSpan = 'play-roll-span';
+
     get innerDiv() {
         return $.parseHTML($.trim(`
         <div>
             <div>
-                <button id="${this.#rollButton}">Roll</Button>
+                <label>
+                <button class="button" id="${this.#rollButtonId}">Roll</Button>
+                <span id="${this.#rollSpan}"></span>
+                </label>
             </div>
             <canvas id="playcanvas"></canvas>
             <h2 id="${this.#shortLabelId}"></h2>
@@ -43,6 +49,12 @@ export class PlayTab extends GenericTab {
                 }
             }
         }
+        this.my(this.#rollButtonId).on("click", e=> {
+            this.my(this.#rollSpan).text(`Rolled a ${Math.floor(Math.random() * 4) + 1}`);
+            setTimeout( e => {
+                this.my(this.#rollSpan).text('');
+            }, 1000)
+        });
     }
 
     activate() {
